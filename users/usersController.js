@@ -8,32 +8,32 @@ module.exports = {
     const password = req.body.password;
     User.login(username, password)
     .then(match => {
-      res.json(!!match);
+      console.log(match);
+      // res.json(!!match);
     })
     .catch(err => {
-      console.error('user not found!!');
+      console.error(err);
     });
   },
 
   signUp: (req, res, next) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    User.signUp(username, password)
+    User.signUp(req.body)
     .then(match => {
-      res.json(!!match);
+      console.log(match);
+      // res.json(!!match);
     })
     .catch(err => {
-      console.error('could not sign up!!');
+      console.error(err);
     });
   },
 
   findMatches: (req, res, next) => {
     User.findMatches(req.user)
-    .then(friends => {
-      res.json(friends);
+    .then(matches => {
+      res.json(matches);
     })
     .catch(err => {
-      console.error('could not find any matches')
+      console.error(err)
     });
   },
 

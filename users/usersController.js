@@ -8,10 +8,13 @@ module.exports = {
     const password = req.body.password;
     User.login(username, password)
     .then(user => {
-      console.log('logged in bad password', user);
       if (user) {
+        delete user.password;
         req.session.user = user;
-        res.json('sucess logging in');
+        res.json({
+          message: 'Success Logging in',
+          user: req.session.user
+        });
         // res.redirect('/home');
       } else {
         res.json('Invalid username or password');
@@ -27,15 +30,19 @@ module.exports = {
     .then(newUser => {
       console.log('user', newUser);
       if (typeof newUser === 'object') {
+        delete newUser.password;
         req.session.user = newUser;
-        res.json('success!!');
+        res.json({
+          message: 'Success creating a new user!!',
+          user: req.session.user
+        });
         // res.redirect('/home');
       } else {
+        //send error message
         res.json(newUser);
       }
     })
     .catch(err => {
-      console.error(err);
       res.json('Error signing up. Please try a different username or password');
     });
   },
@@ -45,7 +52,6 @@ module.exports = {
       User.findOne({ where: { username: req.session.user.username} })
       .then(user => {
         if (user) {
-          // console.log('user in findMatches controller', user.dataValues);
           User.findMatches(user.dataValues)
           .then(matches => {
             res.json(matches);
@@ -60,7 +66,6 @@ module.exports = {
     } else {
       res.redirect('/login');
     }
-
   },
 
 };

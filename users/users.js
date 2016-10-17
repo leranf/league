@@ -22,7 +22,7 @@ User.sync();
 
 User.login = (username, password) =>
   User.findOne({ where: { username, password } })
-  .then(user => user)
+  .then(user => user.dataValues)
   .catch(err => err);
 
 User.signUp = data => 
@@ -66,7 +66,6 @@ User.findMatches = user =>
       religion: userPrefs.religion,
     }})
     .then(possibleMatches => {
-      // console.log('possibleMatches', possibleMatches);
       if (possibleMatches.length) {
         const matchesWithinDistance = possibleMatches.filter(possibleMatch => {
           const start = { lat: user.lat, lon: user.lon };
@@ -86,7 +85,13 @@ User.findMatches = user =>
           }).slice(0,5);
           return Promise.all(prefsOfMatchesThatMeetPrefs.map(prefOfMatchesThatMeetPrefs =>
             User.findOne({ where: { id: prefOfMatchesThatMeetPrefs.dataValues.userid } })
-          ));
+          ))
+          .then(foundMatches => {
+            foundMatches.forEach(foundMatch => {
+              delete foundMatch.password;
+            });
+            return foundMatches;
+          });
         });
       }
     }))
